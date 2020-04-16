@@ -1,43 +1,48 @@
+/* eslint-disable max-len */
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as classnames from 'classnames';
-import { inject, observer } from 'mobx-react';
-
-const TodoItem = inject('TodoStore')(observer(props => {
-  const TodoStore = props.TodoStore;
-
+import classNames from 'classnames';
+import {inject, observer} from 'mobx-react';
+import {DELETE_TODO, INPUT_EDIT, DIV_NO_EDITING} from '../test/testIds';
+const TodoItem = inject('TodoStore')(observer((
+    {
+      TodoStore:
+    {checkTodo, editTodo, deleteTodo, cancelEdit, doneEdit, todos}, todo}) => {
   return (
     <div>
-      <div key={props.todo.id} className="todo-item">
+      <div testingkey={todo.id} key={todo.id} className="todo-item">
         <div className="todo-item-left">
-          <input type="checkbox" onChange={(event) => TodoStore.checkTodo(props.todo, event)} checked={props.todo.completed} />
-
-          {!props.todo.editing &&
+          <input type="checkbox" onChange={(event) => checkTodo(todo, event)} checked={todo.completed} />
+          {!todo.editing &&
           <div
-            className={classnames({'todo-item-label': true, 'completed': props.todo.completed})}
-            onDoubleClick={(event) => TodoStore.editTodo(props.todo, event)}
+            todo={todo}
+            data-testid={DIV_NO_EDITING}
+            className={classNames({'todo-item-label': true, 'completed': todo.completed})}
+            onDoubleClick={(event) => editTodo(todo, event)}
           >
-            {props.todo.title}
+            {todo.title}
           </div>
           }
-
-          {props.todo.editing &&
+          {todo.editing &&
           <input
+            data-testid={INPUT_EDIT}
             className="todo-item-edit" type="text" autoFocus
-            defaultValue={props.todo.title}
-            onBlur={(event) => TodoStore.doneEdit(props.todo, event)}
+            defaultValue={todo.title}
+            onBlur={(event) => doneEdit(todo, event)}
             onKeyUp={(event) => {
               if (event.key === 'Enter') {
-                TodoStore.doneEdit(props.todo, event);
+                doneEdit(todo, event);
               } else if (event.key === 'Escape') {
-                TodoStore.cancelEdit(props.todo, event);
+                cancelEdit(todo, event);
               }
             }}
           />
           }
 
         </div>
-        <div className="remove-item" onClick={(event) => TodoStore.deleteTodo(props.todo.id)}>
+        <div data-testid={DELETE_TODO}
+          className="remove-item"
+          onClick={(event) => deleteTodo(todo.id)}>
           &times;
         </div>
       </div>

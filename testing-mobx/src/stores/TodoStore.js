@@ -1,6 +1,7 @@
+/* eslint-disable require-jsdoc */
+/* eslint-disable no-invalid-this */
 import React from 'react';
-import { observable, action, computed, configure, runInAction } from 'mobx';
-configure({enforceActions: true});
+import {observable, action, computed, runInAction} from 'mobx';
 
 class TodoStore {
   @observable todoInput = React.createRef();
@@ -8,7 +9,7 @@ class TodoStore {
   @observable beforeEditCache = '';
   @observable todos = [];
 
-  @action addTodo = event => {
+  @action addTodo = (event) => {
     if (event.key === 'Enter') {
       const todoInput = this.todoInput.current.value;
 
@@ -23,30 +24,30 @@ class TodoStore {
         editing: false,
       });
 
-      this.todoInput.current.value = '';
+      // this.todoInput.current.value = '';
     }
   }
 
-  @action deleteTodo = id => {
-    runInAction(() => {
-        const index = this.todos.findIndex(item => item.id === id);
-        this.todos.splice(index, 1);
-      });
+  @action deleteTodo = (id) => {
+    console.log('deleteTodo called : ' + this.todos);
+    const index = this.todos.findIndex((item) => item.id === id);
+    this.todos.splice(index, 1);
   }
 
-  @action checkTodo = (todo, event) => {
+  @action checkTodo = (todo, _event) => {
     runInAction(() => {
-        todo.completed = !todo.completed;
-        const index = this.todos.findIndex(item => item.id === todo.id);
-        this.todos.splice(index, 1, todo);
-      });
+      todo.completed = !todo.completed;
+      const index = this.todos.findIndex((item) => item.id === todo.id);
+      this.todos.splice(index, 1, todo);
+    });
   }
 
-  @action editTodo = (todo, event) => {
+  @action editTodo = (todo) => {
+    console.log('Editing On');
     todo.editing = true;
     this.beforeEditCache = todo.title;
 
-    const index = this.todos.findIndex(item => item.id === todo.id);
+    const index = this.todos.findIndex((item) => item.id === todo.id);
 
     this.todos.splice(index, 1, todo);
   }
@@ -61,58 +62,57 @@ class TodoStore {
     }
 
     runInAction(() => {
-        const index = this.todos.findIndex(item => item.id === todo.id);
-        this.todos.splice(index, 1, todo);
-      });
+      const index = this.todos.findIndex((item) => item.id === todo.id);
+      this.todos.splice(index, 1, todo);
+    });
   }
 
-  @action cancelEdit = (todo, event) => {
+  @action cancelEdit = (todo, _event) => {
     todo.title = this.beforeEditCache;
     todo.editing = false;
 
-    const index = this.todos.findIndex(item => item.id === todo.id);
+    const index = this.todos.findIndex((item) => item.id === todo.id);
 
     this.todos.splice(index, 1, todo);
   }
 
   @action checkAllTodos = (event) => {
-    this.todos.forEach(todo => todo.completed = event.target.checked);
+    this.todos.forEach((todo) => todo.completed = event.target.checked);
     event.persist();
     runInAction(() => {
-      this.todos.forEach(todo => todo.completed = event.target.checked);
+      this.todos.forEach((todo) => todo.completed = event.target.checked);
     });
   }
 
-  @action updateFilter = filter => {
+  @action updateFilter = (filter) => {
     this.filter = filter;
   }
 
 
   @action clearCompleted = () => {
-      runInAction(() => {
-          this.todos = this.todos.filter(todo => !todo.completed);
-        });
-
+    runInAction(() => {
+      this.todos = this.todos.filter((todo) => !todo.completed);
+    });
   }
 
   @computed get todosCompletedCount() {
-    return this.todos.filter(todo => todo.completed).length;
+    return this.todos.filter((todo) => todo.completed).length;
   }
 
   @computed get todosFiltered() {
     if (this.filter === 'all') {
       return this.todos;
     } else if (this.filter === 'active') {
-      return this.todos.filter(todo => !todo.completed);
+      return this.todos.filter((todo) => !todo.completed);
     } else if (this.filter === 'completed') {
-      return this.todos.filter(todo => todo.completed);
+      return this.todos.filter((todo) => todo.completed);
     }
-
+    console.log('computed values returning : ' + this.todos);
     return this.todos;
   }
 
   @computed get remaining() {
-    return this.todos.filter(todo => !todo.completed).length;
+    return this.todos.filter((todo) => !todo.completed).length;
   }
 
   @computed get anyRemaining() {
