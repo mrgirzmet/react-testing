@@ -81,6 +81,8 @@ it('After Delete Operation hom many item rendered', async () => {
   expect(getAllByTestId(testIds.DELETE_TODO).length).toBe(3);
 });
 
+asdsa;
+
 // A variable to be ensure the size of effectted component
 let lengthBeforeTestOperationDone = 0;
 it('After Delete Operation hom many item rendered', () => {
